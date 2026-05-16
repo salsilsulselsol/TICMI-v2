@@ -1,0 +1,4 @@
+# Optional dependencies for RAG experimentation only.
+# Install this AFTER core dependencies are working.
+
+chromadb==0.4.22

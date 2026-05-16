@@ -1,85 +1,119 @@
 # TICMI - Local Development Setup
 
-Panduan development lokal tanpa Docker untuk proyek TICMI.
+Panduan ini untuk menjalankan prototipe TICMI (mobile-first + FastAPI + LangGraph) di lokal.
 
-## Prerequisites
+## Prasyarat
 
-### Backend (Python 3.10+)
-1. Install Python 3.10 atau lebih baru
-2. Buat virtual environment:
-   ```bash
-   cd backend
-   python -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   # atau
-   venv\Scripts\activate  # Windows
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Setup database PostgreSQL secara lokal:
-   ```bash
-   # Ubuntu/Debian
-   sudo apt install postgresql postgresql-contrib
-   
-   # Mac (dengan Homebrew)
-   brew install postgresql
-   
-   # Buat database
-   createdb ticmi_db
-   ```
-5. Jalankan backend:
-   ```bash
-   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-   ```
+- Python `3.10+`
+- Node.js `18+`
+- npm `9+` (ikut dari Node.js)
 
-### Frontend (Node.js 18+)
-1. Install Node.js 18 atau lebih baru
-2. Install dependencies:
-   ```bash
-   cd frontend
-   npm install
-   ```
-3. Jalankan development server:
-   ```bash
-   npm run dev
-   ```
+## 1) Setup Environment
 
-## Environment Variables
+Dari root project `C:\projects\TICMI-v2`:
 
-### Backend (.env di folder backend/)
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/ticmi_db
-GOOGLE_API_KEY=your_gemini_api_key
-CHROMA_DB_PATH=./chroma_db
+```bash
+copy .env.example .env
 ```
 
-### Frontend (.env.local di folder frontend/)
+Konfigurasi minimal yang perlu dicek di `.env`:
+
 ```env
+DEFAULT_LLM_PROVIDER=mock
 NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws
+CORS_ORIGINS=http://localhost:3000
 ```
 
-## Menjalankan Proyek
+## 2) Jalankan Backend (Core Runtime)
 
-1. Terminal 1 - Backend:
-   ```bash
-   cd backend
-   source venv/bin/activate
-   uvicorn app.main:app --reload
-   ```
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-2. Terminal 2 - Frontend:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
+Cek backend:
+- Health: `http://localhost:8000/health`
+- Swagger: `http://localhost:8000/docs`
 
-3. Akses aplikasi di `http://localhost:3000`
+## 3) Jalankan Frontend
 
-## Development Tools
+Terminal baru:
 
-- **Database GUI**: pgAdmin, DBeaver, atau TablePlus
-- **API Testing**: Postman, Insomnia, atau Swagger UI di `http://localhost:8000/docs`
-- **Hot Reload**: Keduanya support hot reload otomatis
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Catatan:
+- Script `npm run dev` sudah menggunakan `next dev --webpack` untuk stabilitas lebih baik di Windows (mengurangi error lock file `EBUSY` dari Turbopack).
+
+Buka app di:
+- `http://localhost:3000`
+
+## 4) Alur Uji Cepat (Manual)
+
+1. Buka UI `http://localhost:3000`
+2. Isi topik (misalnya `Persamaan Linear`)
+3. Klik `Mulai Sesi`
+4. Kirim jawaban siswa di chat
+5. Pastikan respons Socratic muncul dari backend
+
+## 5) Konfigurasi Model
+
+### Mode gratis penuh (default)
+
+```env
+DEFAULT_LLM_PROVIDER=mock
+```
+
+### Pakai OpenRouter (opsional)
+
+```env
+DEFAULT_LLM_PROVIDER=openrouter
+DEFAULT_LLM_MODEL=openrouter/free
+OPENROUTER_API_KEY=<isi_key>
+```
+
+## 6) Dependency RAG Opsional (Chroma)
+
+RAG/Chroma belum wajib untuk MVP. Kalau ingin coba:
+
+```bash
+cd backend
+venv\Scripts\activate
+pip install -r requirements-rag.txt
+```
+
+Jika gagal build `chroma-hnswlib` di Windows + Python 3.12:
+- install Microsoft C++ Build Tools, atau
+- pakai Python 3.11 untuk environment RAG, atau
+- tunda Chroma dan lanjut pakai MVP tanpa RAG dulu.
+
+## Endpoint Utama
+
+- `GET /health`
+- `POST /sessions`
+- `GET /sessions/{session_id}/state`
+- `POST /api/v1/chat`
+- `DELETE /sessions/{session_id}`
+
+## Troubleshooting
+
+- `'next' is not recognized`
+  - Jalankan `npm install` di folder `frontend`, lalu `npm run dev`.
+- CORS error dari frontend ke backend
+  - Pastikan `.env` backend berisi `CORS_ORIGINS=http://localhost:3000`.
+- Frontend tidak terhubung ke backend
+  - Pastikan `.env` root berisi `NEXT_PUBLIC_API_URL=http://localhost:8000`.
+- Frontend error `EBUSY: resource busy or locked` saat compile (`page.tsx`, `globals.css`, dll)
+  - Pastikan jalankan via `npm run dev` (script ini sudah pakai `next dev --webpack`).
+  - Hentikan proses frontend yang nyangkut, lalu start ulang:
+  ```bash
+  cd frontend
+  npm run dev
+  ```
+  - Jika error masih sesekali muncul, tambahkan folder project ke exclusion antivirus/Windows Defender real-time scanning.

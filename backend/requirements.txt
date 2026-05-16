@@ -11,25 +11,12 @@ sqlalchemy==2.0.25
 psycopg2-binary==2.9.9
 alembic==1.13.1
 
-# LangChain & LangGraph AI Framework
-langchain==0.1.4
-langchain-core==0.1.21
-langgraph==0.0.28
-langchain-community==0.0.20
-
-# LLM Providers
-langchain-google-genai==0.0.12
-ollama==0.1.6
-
-# Vector Database (RAG)
-chromadb==0.4.22
-
-# Math & Symbolic Computation (for math problem parsing)
+# Math utils
 sympy==1.12
 
 # Utilities
 python-dotenv==1.0.0
-httpx==0.26.0
+httpx==0.25.2
 aiofiles==23.2.1
 
 # Development & Testing

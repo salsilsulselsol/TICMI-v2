@@ -1,41 +1,61 @@
-# TICMI (Teach Me) - Adaptive Digital Learning Platform
-## High School Mathematics with Multi-Agent AI Architecture
+# TICMI (Teach Me)
 
-### Overview
-TICMI is an adaptive learning platform that detects prerequisite knowledge gaps and performs Socratic remediation based on the "Student-as-Teacher" paradigm.
+Adaptive digital learning platform for SMA Mathematics with agentic Socratic remediation.
 
-### Tech Stack
-- **Frontend:** Next.js 14+ (App Router), TypeScript, Tailwind CSS, Zustand, React Flow
-- **Backend:** FastAPI (Python 3.10+), PostgreSQL, WebSockets
-- **AI/Agent Layer:** LangGraph, ChromaDB, Google Gemini 1.5 Pro / Ollama
+## Current Prototype Scope (v0.2)
 
-### Project Structure
+- Mobile-first web app (Next.js)
+- FastAPI backend with session + chat API
+- LangGraph workflow:
+  - Diagnostic node
+  - Socratic remediation node
+  - Resolution check
+- LLM routing:
+  - `mock` mode (default, no API key)
+  - OpenRouter (`openrouter/free` suggested)
+  - Optional NVIDIA fallback endpoint
+
+## Architecture Snapshot
+
+- `frontend/`: Next.js UI
+- `backend/`: FastAPI + LangGraph orchestration
+- `.docs/`: design docs and roadmap
+
+## Quick Start
+
+### 1. Environment
+
+Copy `.env.example` to `.env` and adjust values.
+
+### 2. Run Backend
+
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
-ticmi/
-├── backend/
-│   ├── app/
-│   │   ├── ai_agents/       # LangGraph multi-agent workflow
-│   │   ├── api/             # FastAPI routers
-│   │   ├── core/            # Core configuration
-│   │   ├── models/          # SQLAlchemy models
-│   │   └── schemas/         # Pydantic schemas
-│   └── requirements.txt
-├── frontend/
-│   └── src/
-│       ├── app/             # Next.js App Router
-│       ├── components/      # React components
-│       ├── hooks/           # Custom hooks
-│       ├── store/           # Zustand state management
-│       └── types/           # TypeScript types
-└── docker-compose.yml
+
+### 3. Run Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-### Getting Started
+Open: `http://localhost:3000`
 
-#### Local Development (Recommended)
-Lihat [README_LOCAL.md](./README_LOCAL.md) untuk panduan lengkap setup tanpa Docker.
+## Key API Endpoints
 
-#### Quick Start
-1. Install backend dependencies: `pip install -r backend/requirements.txt`
-2. Install frontend dependencies: `npm install` (in frontend directory)
-3. Run locally: Follow instructions in README_LOCAL.md
+- `GET /health`
+- `POST /sessions`
+- `GET /sessions/{session_id}/state`
+- `POST /api/v1/chat`
+
+## Notes
+
+- Default mode is `mock`, so prototype works without paid API.
+- To use real model: set `DEFAULT_LLM_PROVIDER=openrouter` and fill `OPENROUTER_API_KEY`.
+- Supabase integration can be enabled by replacing `DATABASE_URL` with Supabase Postgres connection string.
