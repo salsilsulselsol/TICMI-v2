@@ -31,6 +31,11 @@ ticmi/
 ```
 
 ### Getting Started
+
+#### Local Development (Recommended)
+Lihat [README_LOCAL.md](./README_LOCAL.md) untuk panduan lengkap setup tanpa Docker.
+
+#### Quick Start
 1. Install backend dependencies: `pip install -r backend/requirements.txt`
 2. Install frontend dependencies: `npm install` (in frontend directory)
-3. Run with Docker: `docker-compose up`
+3. Run locally: Follow instructions in README_LOCAL.md
