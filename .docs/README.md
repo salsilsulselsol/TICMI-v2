@@ -6,6 +6,9 @@ Dokumen perancangan prototipe:
 - `02-system-architecture.md`
 - `03-mobile-first-notes.md`
 - `04-prototype-roadmap.md`
+- `05-scope-v0.3-locked.md`
+- `06-ui-proposal-direction.md`
+- `07-frontend-package-stack.md`
 
 Referensi eksternal utama:
 

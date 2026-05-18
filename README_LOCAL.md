@@ -34,6 +34,12 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
+Alternatif cepat (dari root project):
+
+```bash
+dev-backend.bat
+```
+
 Cek backend:
 - Health: `http://localhost:8000/health`
 - Swagger: `http://localhost:8000/docs`
@@ -48,11 +54,29 @@ npm install
 npm run dev
 ```
 
+Alternatif cepat (dari root project):
+
+```bash
+dev-frontend.bat
+```
+
 Catatan:
 - Script `npm run dev` sudah menggunakan `next dev --webpack` untuk stabilitas lebih baik di Windows (mengurangi error lock file `EBUSY` dari Turbopack).
 
 Buka app di:
 - `http://localhost:3000`
+
+## 3.1) Jalankan Sekaligus (Backend + Frontend)
+
+Dari root project:
+
+```bash
+dev-all.bat
+```
+
+Perintah ini akan membuka 2 terminal otomatis:
+- Terminal backend (`:8000`)
+- Terminal frontend (`:3000`)
 
 ## 4) Alur Uji Cepat (Manual)
 
@@ -115,5 +139,9 @@ Jika gagal build `chroma-hnswlib` di Windows + Python 3.12:
   ```bash
   cd frontend
   npm run dev
+  ```
+  - Atau jalankan helper otomatis dari root project:
+  ```bash
+  fix-lock.bat
   ```
   - Jika error masih sesekali muncul, tambahkan folder project ke exclusion antivirus/Windows Defender real-time scanning.
